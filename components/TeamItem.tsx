@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper';
 type TeamItemsProps = {
   onPress: () => void;
   teamName: string;
-  teamMembers: string[];
+  teamMembers: number;
 };
 
 const TeamItem = ({ onPress, teamName, teamMembers }: TeamItemsProps) => {
@@ -16,7 +16,7 @@ const TeamItem = ({ onPress, teamName, teamMembers }: TeamItemsProps) => {
           {teamName}
         </Text>
         <Text variant="bodySmall" style={styles.teamMembersCount}>
-          {teamMembers.length} members
+          {teamMembers} member{teamMembers > 1 ? 's' : ''}
         </Text>
       </View>
       <View>

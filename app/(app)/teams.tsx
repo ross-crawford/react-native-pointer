@@ -1,26 +1,17 @@
 import TeamItem from '@/components/TeamItem';
+import { useAuth } from '@/context/auth-context';
+import { teams } from '@/lib/appwrite';
 import { toast } from '@/lib/toast';
 import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { ID } from 'react-native-appwrite';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
-
-const teams = [
-  {
-    id: '1',
-    name: 'Team Alpha',
-    members: ['Alice', 'Bob', 'Charlie'],
-  },
-  {
-    id: '2',
-    name: 'Team Beta',
-    members: ['David', 'Eve', 'Frank'],
-  },
-  {
-    id: '3',
-    name: 'Team Gamma',
-    members: ['Grace', 'Heidi', 'Ivan'],
-  },
-];
 
 const TeamsScreen = () => {
   const [createTeamName, setCreateTeamName] = useState<string>('');
@@ -28,28 +19,44 @@ const TeamsScreen = () => {
   const [joinTeamName, setJoinTeamName] = useState<string>('');
   const [joinTeamError, setJoinTeamError] = useState<string | null>(null);
 
-  const handleCreateTeam = () => {
+  const { user, teamList } = useAuth();
+
+  const handleCreateTeam = async () => {
     if (!createTeamName.trim()) {
       setCreateTeamError('Please enter a team name.');
       return;
     }
     setCreateTeamError(null);
     setCreateTeamName('');
+    const result = await teams.create(ID.unique(), createTeamName);
+    console.log(result);
     toast('Team created successfully!');
   };
 
-  const handleJoinTeam = () => {
+  const handleJoinTeam = async () => {
     if (!joinTeamName.trim()) {
       setJoinTeamError('Please enter a team code.');
       return;
     }
+    const result = await teams.createMembership(
+      '683ecd830018871fe9f8',
+      ['member'],
+      undefined,
+      user?.$id,
+      undefined,
+      'http://localhost:8081/teams'
+    );
+    console.log(result);
     setJoinTeamError(null);
     setJoinTeamName('');
     toast('Team joined successfully!');
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
       {/* Create team */}
       <View style={styles.content}>
         <Text style={styles.title} variant="titleLarge">
@@ -106,13 +113,13 @@ const TeamsScreen = () => {
           Your teams
         </Text>
         <FlatList
-          data={teams}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+          data={teamList}
+          keyExtractor={(team) => team.$id}
+          renderItem={({ item: team }) => (
             <TeamItem
-              onPress={() => toast(`This is ${item.name}`)}
-              teamName={item.name}
-              teamMembers={item.members}
+              onPress={() => toast(`This is ${team.name}`)}
+              teamName={team.name}
+              teamMembers={team.total}
             />
           )}
           ListEmptyComponent={
@@ -125,7 +132,7 @@ const TeamsScreen = () => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -148,7 +155,6 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#6200ee',
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',

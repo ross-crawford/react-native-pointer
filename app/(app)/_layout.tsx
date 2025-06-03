@@ -1,17 +1,16 @@
-import { useAuth } from '@/context/auth-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 
 const AppLayout = () => {
-  const { logout } = useAuth();
+  const router = useRouter();
 
   return (
     <Tabs
       screenOptions={{
         headerRight: () => (
-          <Button onPress={logout}>
-            <Ionicons name="settings-outline" size={24} color="black" />
+          <Button onPress={() => router.push('/account')}>
+            <Ionicons name="person-outline" size={24} color="black" />
           </Button>
         ),
         tabBarStyle: {
@@ -20,7 +19,7 @@ const AppLayout = () => {
           elevation: 0,
           shadowOpacity: 0,
         },
-        tabBarActiveTintColor: '#6200ee',
+        tabBarActiveTintColor: '#6750A4',
         tabBarInactiveTintColor: '#666666',
       }}
     >

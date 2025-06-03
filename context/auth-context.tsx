@@ -1,4 +1,4 @@
-import { account } from '@/lib/appwrite';
+import { account, teams } from '@/lib/appwrite';
 import { toast } from '@/lib/toast';
 import {
   createContext,
@@ -13,6 +13,7 @@ import { ID, Models } from 'react-native-appwrite';
 type AuthContextType = {
   user: Models.User<Models.Preferences> | null;
   checking: boolean;
+  teamList: Models.Team<Models.Preferences>[] | null;
   register: (email: string, password: string) => Promise<string | null>;
   login: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<string | null>;
@@ -21,6 +22,7 @@ type AuthContextType = {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   checking: true,
+  teamList: null,
   register: async () => null,
   login: async () => null,
   logout: async () => null,
@@ -39,13 +41,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [checking, setChecking] = useState<boolean>(true);
+  const [teamList, setTeamList] = useState<
+    Models.Team<Models.Preferences>[] | null
+  >(null);
 
-  const getUser = async () => {
+  const initialise = async () => {
     try {
       const currentUser = await account.get();
+      const currentUserTeams = await teams.list();
+      setTeamList(currentUserTeams.teams);
       setUser(currentUser);
     } catch {
       setUser(null);
+      setTeamList(null);
     } finally {
       setChecking(false);
     }
@@ -69,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       await account.createEmailPasswordSession(email, password);
-      await getUser();
+      await initialise();
       toast('Login successful!');
       return null;
     } catch (error) {
@@ -89,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await account.deleteSession('current');
       setUser(null);
+      setTeamList(null);
       toast('Logout successful!');
       return null;
     } catch (error) {
@@ -101,11 +110,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    getUser();
+    initialise();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ register, login, logout, user, checking }}>
+    <AuthContext.Provider
+      value={{ register, login, logout, teamList, user, checking }}
+    >
       {children}
     </AuthContext.Provider>
   );
