@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   content: {
-    // flex: 1,
     padding: 16,
     alignItems: 'flex-start',
     gap: 8,

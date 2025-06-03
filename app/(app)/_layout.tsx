@@ -1,21 +1,16 @@
 import { useAuth } from '@/context/auth-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Redirect, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { Button } from 'react-native-paper';
 
 const AppLayout = () => {
-  const { user, checking, logout } = useAuth();
-  // const router = useRouter();
-
-  if (checking) return null;
-  if (!user) return <Redirect href="/(auth)" />;
+  const { logout } = useAuth();
 
   return (
     <Tabs
       screenOptions={{
         headerRight: () => (
           <Button onPress={logout}>
-            {/* <Button onPress={() => router.push('/settings')}> */}
             <Ionicons name="settings-outline" size={24} color="black" />
           </Button>
         ),
