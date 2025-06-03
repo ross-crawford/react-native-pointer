@@ -2,13 +2,7 @@ import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import {
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-  useTheme,
-} from 'react-native-paper';
+import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 
 const AuthScreen = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
@@ -17,7 +11,6 @@ const AuthScreen = () => {
   const [emailError, setEmailError] = useState<string | null>('');
   const [passwordError, setPasswordError] = useState<string | null>('');
 
-  const theme = useTheme();
   const { register, login } = useAuth();
   const router = useRouter();
 
