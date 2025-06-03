@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "habit-tracker",
-    "slug": "habit-tracker",
+    "name": "pointer",
+    "slug": "pointer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "habittracker",
+    "scheme": "pointer",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
